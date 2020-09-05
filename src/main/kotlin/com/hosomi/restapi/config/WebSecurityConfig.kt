@@ -14,22 +14,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 @EnableWebSecurity
 internal class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
-    @Throws(Exception::class)
-    override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.inMemoryAuthentication()
-            .withUser("hosomi")
-            .password(passwordEncoder().encode("hosomipass"))
-            .roles("USER")
-    }
+    @Autowired
+    private lateinit var userDetailsService: UserDetailsService
 
     @Bean
-    @Throws(java.lang.Exception::class)
-    override fun authenticationManagerBean(): AuthenticationManager? {
+    fun passwordEncoder(): BCryptPasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    @Throws(Exception::class)
+    override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
 
-    @Bean
-    fun passwordEncoder(): BCryptPasswordEncoder {
-        return BCryptPasswordEncoder()
+    @Throws(Exception::class)
+    override fun configure(auth: AuthenticationManagerBuilder) {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder())
     }
 }
