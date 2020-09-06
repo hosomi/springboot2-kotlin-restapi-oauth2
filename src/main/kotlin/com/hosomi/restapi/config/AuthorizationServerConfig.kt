@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer
@@ -20,29 +19,31 @@ import javax.sql.DataSource
 class AuthorizationServerConfig : AuthorizationServerConfigurerAdapter() {
 
     @Autowired
-    lateinit var passwordEncoder: BCryptPasswordEncoder
+    private lateinit var authenticationManager: AuthenticationManager
 
     @Autowired
-    lateinit var authenticationManager: AuthenticationManager
+    private lateinit var dataSource: DataSource
+
+    @Autowired
+    private lateinit var userDetailsService: UserDetailsService
+
+    @Bean
+    fun tokenStore(): TokenStore = InMemoryTokenStore()
 
     @Throws(Exception::class)
     override fun configure(oauthServer: AuthorizationServerSecurityConfigurer) {
-        oauthServer
-                .checkTokenAccess("isAuthenticated()")
+        oauthServer.checkTokenAccess("isAuthenticated()")
     }
 
     @Throws(Exception::class)
     override fun configure(clients: ClientDetailsServiceConfigurer) {
-        clients.inMemory()
-            .withClient("client")
-            .secret(passwordEncoder.encode("secret"))
-            .authorizedGrantTypes("refresh_token", "password", "client_credentials")
-            .scopes("user_info")
-            .autoApprove(true)
+        clients.jdbc(dataSource)
     }
 
     @Throws(Exception::class)
     override fun configure(endpoints: AuthorizationServerEndpointsConfigurer) {
-        endpoints.authenticationManager(authenticationManager)
+        endpoints.tokenStore(tokenStore())
+            .userDetailsService(userDetailsService)
+            .authenticationManager(authenticationManager)
     }
 }

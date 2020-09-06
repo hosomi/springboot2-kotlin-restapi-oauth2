@@ -15,6 +15,7 @@ class ResourceServerConfig  : ResourceServerConfigurerAdapter() {
             .anonymous().disable()
             .authorizeRequests()
             .antMatchers("/api/user/**").hasRole("USER")
-            .antMatchers("/api/public/**").authenticated()
+            .antMatchers("/api/admin/**").hasRole("ADMIN")
+            .antMatchers("/api/signup").authenticated()
     }
 }
