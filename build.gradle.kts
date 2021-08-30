@@ -23,7 +23,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.security.oauth:spring-security-oauth2:2.5.0.RELEASE")
+	implementation("org.springframework.security.oauth:spring-security-oauth2:2.5.1.RELEASE")
 
 	runtimeOnly("com.h2database:h2")
 
