@@ -32,7 +32,7 @@ dependencies {
 		exclude(module = "mockito-core")
 	}
 	testImplementation("org.springframework.security:spring-security-test")
-	testImplementation("com.ninja-squad:springmockk:2.0.2")
+	testImplementation("com.ninja-squad:springmockk:2.0.3")
 }
 
 tasks.withType<Test> {
